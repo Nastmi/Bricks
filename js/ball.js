@@ -3,8 +3,9 @@ class Ball{
         this.x = x;
         this.y = y;
         this.radius = radius;
-        this.speedX = 5;
+        this.speedX =  -5;
         this.speedY = -5;
+        this.startSpeed = this.speedY;
     }
     move(){
         this.x+=this.speedX;

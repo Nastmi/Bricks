@@ -6,6 +6,7 @@ let keys ={
 
 document.addEventListener("keydown",setKey);
 document.addEventListener("keyup",clearKey);
+//document.addEventListener("mousemove",moveBall);
 
 function setKey(e){
     switch(e.keyCode){
@@ -28,5 +29,10 @@ function clearKey(e){
             break;
     }
 }
+
+/*function moveBall(e){
+    ball.x = e.clientX;
+    ball.y = e.clientY;
+}*/
 
 

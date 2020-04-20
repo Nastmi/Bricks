@@ -22,6 +22,7 @@ function tick(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     getDirection();
     player.move();
+    testCollisions(ball,player,brickArr);
     ball.move();
     drawStage();
     requestAnimationFrame(tick);
@@ -32,15 +33,32 @@ function createStage(){
     /*todo: read brick positions from file?*/
     for(let i=0;i<5;i++){
         //distance between x= (totalWidth-brickWidth)/(numOfBricks-1)
-        brickArr.push(new Brick(430*i,100,200,40));
+        brickArr.push(new Brick(430*i,100,200,50));
     }
-    ball = new Ball(player.x+player.width/2,player.y-player.heigth,15);
+    ball = new Ball(player.x+player.width/2,player.y-player.height,15);
 }
 
 function drawStage(){
     player.draw(ctx,scaleX,scaleY);
     ball.draw(ctx,scaleX);
-    brickArr.forEach(element => element.draw(ctx,scaleX,scaleY));
+    brickArr.forEach(element => {
+        element.draw(ctx,scaleX,scaleY);
+        let sides = element.getSides();
+       /* sides.forEach(element => {
+            ctx.strokeStyle = "#FF0000";
+            ctx.beginPath();
+            ctx.moveTo(element.startPoint.x,element.startPoint.y);
+            ctx.lineTo(element.endPoint.x,element.endPoint.y);
+            ctx.stroke();
+        })*/
+    })
+   /* projectedLines.forEach(element => {
+        ctx.strokeStyle = "#FF0000";
+        ctx.beginPath();
+        ctx.moveTo(ball.x,ball.y);
+        ctx.lineTo(element.x,element.y);
+        ctx.stroke();
+    })*/
 }
 
 function getDirection(){
