@@ -3,10 +3,14 @@
     padding: 0;
 }
 #wrap{
-    width: 100vw;
     height: 100vh;
+    display: grid;
+    grid-template-columns: [startLine] 10% [line1] 80% [line2] 10% [endLine];
+    grid-template-rows: [startRow] 10% [row1] 80% [row2] 10% [endRow];
 }
 #canvasDiv{
+    grid-column: line1/line2;
+    grid-row: row1/endRow;
     width: 100%;
     height: 100%;
 }
@@ -14,4 +18,50 @@
     display: block;
     width: 100%;
     height: 100%;
+}
+#topLeft{
+    grid-column: startLine/line1;
+    grid-Row:startRow/row1;
+}
+#title{
+    grid-column: line1/line2;
+    grid-row: startRow/row1;
+}
+#topRight{
+    grid-column: line2/endLIne;
+    grid-row: startRow/row1;
+}
+#midLeft{
+    grid-column: startLine/line1;
+    grid-row: row1/row2;
+}
+#midRight{
+    grid-column: line2/endLine;
+    grid-row: row1/row2;
+}
+#bottomLeft{
+    grid-column: startLine/line1;
+    grid-row: row2/endRow;
+}
+#bottomRight{
+    grid-column: line2/endLine;
+    grid-row: row2/endRow;
+}
+#topRight,#title,#topLeft,#midLeft,#midRight,#bottomLeft,#bottomRight{
+    font-family: 'Teko', sans-serif;
+    font-size: 2.7em;
+    background-color: #6A8296;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+#midLeft, #midRight{
+    flex-direction:column;
+}
+img{
+    margin-top:30px;
+    margin-bottom: 30px;
+}
+#midLeft,#midRight{
+    border-top:2px solid black;
 }

@@ -7,9 +7,21 @@ class Paddle {
         this.height = height;
         this.baseSpeed = 4;
         this.speedX = 0;
+        this.frames = 0;
+        this.currentImg = 0;
+        //used to scale sizes
+        this.baseX = x;
+        this.baseY = y;
+        this.baseWidth = width;
+        this.baseHeight = height;
+        
     }
     move(){
         this.x+=this.speedX;
+        if(this.x <= 0)
+            this.x = 0;
+        if(this.x+this.width >= canvas.width)
+            this.x = canvas.width-this.width
     }
     getSides(){
         return[
@@ -19,11 +31,16 @@ class Paddle {
             new Line({x:this.x,y:this.y+this.height},{x:this.x,y:this.y})
         ]
     }
-    draw(context,scaleX,scaleY){
-        context.fillStyle = "#FF1493";
-        context.beginPath();
-        context.rect(this.x*scaleX,this.y*scaleY,this.width*scaleX,this.height*scaleY);
-        context.fill();
+    draw(){
+        if(this.frames >= 5){
+            this.currentImg++;
+            this.frames = 0;
+            if(this.currentImg >= 8)
+                this.currentImg = 0;
+        }
+        let img = new Image();
+        img.src = "./images/ship/ship_"+this.currentImg+".png";
+        ctx.drawImage(img,this.x,this.y,this.width,this.height);
     }
     setSpeed(direction){
         switch(direction){
@@ -39,5 +56,12 @@ class Paddle {
                 this.speedX = 0;
                 break;
         }
+    }
+    //changes sizes according to current scale
+    scale(scaleX,scaleY){
+        this.x=this.baseX*scaleX;
+        this.y=this.baseY*scaleY;
+        this.width=this.baseWidth*scaleX;
+        this.height=this.baseHeight*scaleY;
     }
 }

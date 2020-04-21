@@ -15,10 +15,16 @@ function testCollisions(ball,player,arrBricks){
     //test and resolve collisions for bricks
     arrBricks.forEach(element => {
         let sides = element.getSides();
-        if(circleIntersectsLine(ball,sides[0])[0] || circleIntersectsLine(ball,sides[2])[0])
+        if(circleIntersectsLine(ball,sides[0])[0] || circleIntersectsLine(ball,sides[2])[0]){
+            element.hits--;
+            score+=100;
             ball.speedY = -ball.speedY
-        else if(circleIntersectsLine(ball,sides[1])[0] || circleIntersectsLine(ball,sides[3])[0])
-            ball.speedX = -ball.speedX; 
+        }
+        else if(circleIntersectsLine(ball,sides[1])[0] || circleIntersectsLine(ball,sides[3])[0]){
+            element.hits--;
+            score+=100;
+            ball.speedX = -ball.speedX;
+        } 
     });
     let sides = player.getSides();
     //test and resolve collisions for the TOP of the paddle
@@ -43,8 +49,10 @@ function testCollisions(ball,player,arrBricks){
         new Line({x:0+canvas.clientWidth,y:0+canvas.clientHeight},{x:0,y:0+canvas.clientHeight}),
         new Line({x:0,y:0+canvas.clientHeight},{x:0,y:0})
     ];
-    if(circleIntersectsLine(ball,canvasSides[0])[0] || circleIntersectsLine(ball,canvasSides[2])[0])
+    if(circleIntersectsLine(ball,canvasSides[0])[0])
         ball.speedY = -ball.speedY;
+    else if(circleIntersectsLine(ball,canvasSides[2])[0])
+        endGame();
     else if(circleIntersectsLine(ball,canvasSides[1]) || circleIntersectsLine(ball,canvasSides[3]))
         ball.speedX = -ball.speedX;
 }

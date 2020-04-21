@@ -5,13 +5,31 @@ class Brick{
         this.width = width;
         this.height = height;
         this.color = "#00FF7F";
-        this.hits = 1;
+        this.hits = 3;
+        this.frames = 0;
+        this.currentImg = 0;
+        //used to scale sizes
+        this.baseX = x;
+        this.baseY = y;
+        this.baseWidth = width;
+        this.baseHeight = height;
+        
     }
-    draw(context,scaleX,scaleY){
-        context.fillStyle = this.color;
+    draw(){
+        console.log("drowd");
+       /* context.fillStyle = this.color;
         context.beginPath();
-        context.rect(this.x*scaleX,this.y*scaleY,this.width*scaleX,this.height*scaleY);
-        context.fill();
+        context.rect(this.x,this.y,this.width,this.height);
+        context.fill();*/
+        if(this.frames >= 5){
+            this.currentImg++;
+            this.frames = 0;
+            if(this.currentImg >= 11)
+                this.currentImg = 0;
+        }
+        let img = new Image();
+        img.src = "./images/invader/invader"+this.hits+"_"+this.currentImg+".png";
+        ctx.drawImage(img,this.x,this.y,this.width,this.height);
     }
     getSides(){
         return[
@@ -20,6 +38,14 @@ class Brick{
             new Line({x:this.x+this.width,y:this.y+this.height},{x:this.x,y:this.y+this.height}),
             new Line({x:this.x,y:this.y+this.height},{x:this.x,y:this.y})
         ]
+    }
+
+    scale(scaleX,scaleY){
+        //changes sizes according to current scale
+        this.x=this.baseX*scaleX;
+        this.y=this.baseY*scaleY;
+        this.width=this.baseWidth*scaleX;
+        this.height=this.baseHeight*scaleY;
     }
 
 }
