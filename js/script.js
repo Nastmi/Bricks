@@ -13,6 +13,7 @@ async function initialize(){
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
     ctx = canvas.getContext("2d");
+    initializeSprites();
     createStage();
     scale();
     drawStage();

@@ -38,9 +38,7 @@ class Paddle {
             if(this.currentImg >= 8)
                 this.currentImg = 0;
         }
-        let img = new Image();
-        img.src = "./images/ship/ship_"+this.currentImg+".png";
-        ctx.drawImage(img,this.x,this.y,this.width,this.height);
+        ctx.drawImage(ship[this.currentImg],this.x,this.y,this.width,this.height);
     }
     setSpeed(direction){
         switch(direction){

@@ -27,9 +27,7 @@ class Brick{
             if(this.currentImg >= 11)
                 this.currentImg = 0;
         }
-        let img = new Image();
-        img.src = "./images/invader/invader"+this.hits+"_"+this.currentImg+".png";
-        ctx.drawImage(img,this.x,this.y,this.width,this.height);
+        ctx.drawImage(invader[this.hits][this.currentImg],this.x,this.y,this.width,this.height);
     }
     getSides(){
         return[
