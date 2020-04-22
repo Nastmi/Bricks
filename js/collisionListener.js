@@ -18,9 +18,9 @@ function testCollisions(ball,player,arrBricks){
         if(circleIntersectsLine(ball,sides[0])[0] || circleIntersectsLine(ball,sides[2])[0]){
             //the if and else fix the ball hitting a corner and instantly destroying a brick problem
             if(circleIntersectsLine(ball,sides[0])[0])
-                ball.y-=3;
+                ball.y-=7;
             else
-                ball.y+=3;
+                ball.y+=5;
             element.hits--;
             hitsUntilBall--;
             score+=100;
@@ -29,9 +29,9 @@ function testCollisions(ball,player,arrBricks){
         else if(circleIntersectsLine(ball,sides[1])[0] || circleIntersectsLine(ball,sides[3])[0]){
             //the if and else fix the ball hitting a corner and instantly destroying a brick problem
             if(circleIntersectsLine(ball,sides[1])[0])
-                ball.x+=5;
+                ball.x+=7;
             else
-                ball.x-=5;
+                ball.x-=7;
             element.hits--;
             hitsUntilBall--;
             score+=100;
