@@ -14,6 +14,8 @@ let currentStage = 1;
 let canMove = false;
 let scores = [];
 let name;
+let song = new Audio("./sound/song.mp3");
+let music = true;
 async function initialize(){
     canvas = document.getElementById("canvas");
     canvas.width = canvas.clientWidth;
@@ -27,7 +29,6 @@ async function initialize(){
 function gameStart(){
     initializeSprites();
     createStage();
-    scale();
     drawStage();
     tick();
 }
@@ -37,6 +38,7 @@ function tick(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     getDirection();
     if(canMove){
+        song.play();
         player.move();
         ballArr.forEach(element => {
             element.move();
@@ -76,6 +78,7 @@ function tick(){
 }
 
 function nextStage(){
+    song.pause();
     canMove = false;
     currentStage++;
     if(currentStage >= 5)
@@ -119,6 +122,7 @@ function createStage(){
         stageToCreate = stage4;
     createBrickArray(stageToCreate);
     ballArr.push(new Ball(768,755-100,16));
+    scale();
 }
 
 function createBrickArray(stage){
@@ -187,6 +191,7 @@ function enterName(){
 }
 
 function victory(){
+    song.pause();
     canMove = false;
     let min = Math.floor(seconds/60);
     let sec = Math.floor(seconds-(60*min));
@@ -213,11 +218,12 @@ function firstMessage(){
         imageUrl:"./images/commander.png",
         background:"#288e8f url(./images/transparentBackground.png)" ,
         title:"<p style='color:#000000;font-size:2.0em;'>Emergency!</p>",
-        html:"<p style='color:#000000;font-size:1.5em;'>Hello agent Name. This is agent Phil Coulson from the main base. Aliens are currently attacking our stations, and we must stop them as soon as possible. You are our best pilot. We do not have much time.</p>",
+        html:"<p style='color:#000000;font-size:1.5em;'>Hello agent "+name+". This is agent Phil Coulson from the main base. Aliens are currently attacking our stations, and we must stop them as soon as possible. You are our best pilot. We do not have much time.</p>",
         confirmButtonText: "Let's fight!"
     }).then().then((result) => {
-        if(result.value)
-          gameStart();
+        if(result.value){
+            gameStart();
+        }
     })
 }
 
@@ -272,6 +278,8 @@ function scale(){
 }
 
 function endGame(){
+    song.pause();
+    song.currentTime = 0;
     canMove = false;
     let min = Math.floor(seconds/60);
     let sec = Math.floor(seconds-(60*min));
@@ -287,10 +295,26 @@ function endGame(){
         confirmButtonText: "Restart",
     }).then().then((result) => {
         if(result.value){
+            seconds = 0;
+            score = 0;
             currentStage = 1;
             createStage();
         }
     })
+}
+
+function reverseMusic(){
+    let but = document.getElementById("musicButton");
+    if(music){
+        but.src = "./images/speakerOff.png";
+        music = false;
+        song.volume = 0;
+    }
+    else{
+        but.src = "./images/speakerOn.png";
+        music = true;
+        song.volume = 1;
+    }
 }
 
 
