@@ -79,6 +79,7 @@ function tick(){
 
 function nextStage(){
     song.pause();
+    song.currentTime = 0;
     canMove = false;
     currentStage++;
     if(currentStage >= 5)

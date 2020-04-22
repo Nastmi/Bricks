@@ -9,22 +9,22 @@ const stage1 = [
 
 const stage2 = [
     "Station Beta",
-    "3xx2xx2xx2xxxx2xx2xx2xx3",
-    "2xx2xx2xx2xxxx2xx2xx2xx2",
-    "11111111111111111111111",
+    "x2xx2xx2xx2xx2xx2xx2xx3",
+    "x3xx2xx2xx2xx2xx2xx2xx2",
+    "21111111111111111111112",
 ]
 
 const stage3 = [
     "Station Gamma",
-    "3xx3xx3xx3xxxx3xx3xx3xx3",
-    "xx2xx3xx3xx22xxx3xx3xx2x",
-    "121211111111111111112121",
+    "22xxx3xx2xx33xxx2xx3x22",
+    "xx222x22x22xx322xxx3xx2",
+    "23121111111221111111312",
 ]
 
 
 const stage4 = [
     "Station Omega",
-    "333333333333333333333333",
-    "333333333333333333333333",
-    "333333333333333333333333",
+    "33333333333333333333333",
+    "33333333333333333333333",
+    "33333333333333333333333",
 ]
