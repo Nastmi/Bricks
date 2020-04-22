@@ -23,3 +23,6 @@ function initializeSprites(){
         ship.push(image);
     }
 }
+
+let ballSprite = new Image();
+ballSprite.src = "./images/ball.png";

@@ -2,6 +2,10 @@
     margin: 0;
     padding: 0;
 }
+body{
+    font-family: 'Teko', sans-serif;
+    color:"#000000";
+}
 #wrap{
     height: 100vh;
     display: grid;
@@ -18,6 +22,8 @@
     display: block;
     width: 100%;
     height: 100%;
+    background-color: 	#288e8f  ;
+    background-image: url("../images/transparentBackground.png");
 }
 #topLeft{
     grid-column: startLine/line1;
@@ -50,7 +56,9 @@
 #topRight,#title,#topLeft,#midLeft,#midRight,#bottomLeft,#bottomRight{
     font-family: 'Teko', sans-serif;
     font-size: 2.7em;
-    background-color: #6A8296;
+    background-color: 	#288e8f  ;
+    background-image: url("../images/transparentBackground.png");
+
     display:flex;
     justify-content: center;
     align-items: center;

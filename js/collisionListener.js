@@ -16,12 +16,24 @@ function testCollisions(ball,player,arrBricks){
     arrBricks.forEach(element => {
         let sides = element.getSides();
         if(circleIntersectsLine(ball,sides[0])[0] || circleIntersectsLine(ball,sides[2])[0]){
+            //the if and else fix the ball hitting a corner and instantly destroying a brick problem
+            if(circleIntersectsLine(ball,sides[0])[0])
+                ball.y-=3;
+            else
+                ball.y+=3;
             element.hits--;
+            hitsUntilBall--;
             score+=100;
             ball.speedY = -ball.speedY
         }
         else if(circleIntersectsLine(ball,sides[1])[0] || circleIntersectsLine(ball,sides[3])[0]){
+            //the if and else fix the ball hitting a corner and instantly destroying a brick problem
+            if(circleIntersectsLine(ball,sides[1])[0])
+                ball.x+=5;
+            else
+                ball.x-=5;
             element.hits--;
+            hitsUntilBall--;
             score+=100;
             ball.speedX = -ball.speedX;
         } 
@@ -52,7 +64,7 @@ function testCollisions(ball,player,arrBricks){
     if(circleIntersectsLine(ball,canvasSides[0])[0])
         ball.speedY = -ball.speedY;
     else if(circleIntersectsLine(ball,canvasSides[2])[0])
-        endGame();
+        ball.dead = true;
     else if(circleIntersectsLine(ball,canvasSides[1]) || circleIntersectsLine(ball,canvasSides[3]))
         ball.speedX = -ball.speedX;
 }

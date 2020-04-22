@@ -16,6 +16,9 @@ function setKey(e){
         case 39:
             keys.right = true;
             break;
+        case 32:
+            canMove = true;
+            break;
     }
 }
 

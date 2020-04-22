@@ -5,7 +5,7 @@ class Paddle {
         this.y = y;
         this.width = width;
         this.height = height;
-        this.baseSpeed = 4;
+        this.baseSpeed = 7;
         this.speedX = 0;
         this.frames = 0;
         this.currentImg = 0;

@@ -1,11 +1,11 @@
 class Brick{
-    constructor(x,y,width,height,color,hits){
+    constructor(x,y,width,height,hits){
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.color = "#00FF7F";
-        this.hits = 3;
+        this.hits = hits;
         this.frames = 0;
         this.currentImg = 0;
         //used to scale sizes
@@ -16,7 +16,6 @@ class Brick{
         
     }
     draw(){
-        console.log("drowd");
        /* context.fillStyle = this.color;
         context.beginPath();
         context.rect(this.x,this.y,this.width,this.height);
@@ -27,7 +26,7 @@ class Brick{
             if(this.currentImg >= 11)
                 this.currentImg = 0;
         }
-        ctx.drawImage(invader[this.hits][this.currentImg],this.x,this.y,this.width,this.height);
+        ctx.drawImage(invader[Math.max(1,this.hits)][this.currentImg],this.x,this.y,this.width,this.height);
     }
     getSides(){
         return[

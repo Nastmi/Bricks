@@ -3,16 +3,28 @@ let ctx;
 let scaleX;
 let scaleY;
 let player;
-let ball;
 let brickArr = [];
+let ballArr = [];
+let hitsUntilBall = 10;
 let date = new Date();
 let seconds = 0;
+let moveSeconds = 1;
 let score = 0;
+let currentStage = 1;
+let canMove = false;
+let scores = [];
+let name;
 async function initialize(){
     canvas = document.getElementById("canvas");
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
     ctx = canvas.getContext("2d");
+    if(localStorage.getItem("scores"))
+        scores = JSON.parse(localStorage.getItem("scores"));
+    enterName();
+}
+
+function gameStart(){
     initializeSprites();
     createStage();
     scale();
@@ -22,34 +34,104 @@ async function initialize(){
 
 function tick(){
     let newDate = new Date();
-    if(newDate-date >= 1000){
-        let min = Math.floor(seconds/60);
-        let sec = Math.floor(seconds-(60*min));
-        if(sec<10)
-            sec="0"+sec;
-        document.getElementById("timer").innerHTML =min+":"+sec;
-        date = new Date();
-        seconds++;
-    }
     ctx.clearRect(0,0,canvas.width,canvas.height);
     getDirection();
-    player.move();
-    ball.move();
-    testCollisions(ball,player,brickArr);
+    if(canMove){
+        player.move();
+        ballArr.forEach(element => {
+            element.move();
+        })
+        ballArr.forEach(element => {
+            testCollisions(element,player,brickArr);
+        })
+        if(newDate-date >= 1000){
+            let min = Math.floor(seconds/60);
+            let sec = Math.floor(seconds-(60*min));
+            if(sec<10)
+                sec="0"+sec;
+            document.getElementById("timer").innerHTML =min+":"+sec;
+            date = new Date();
+            seconds++;
+            document.getElementById("moveTimer").innerHTML = moveSeconds;
+            moveSeconds--;
+        }
+        if(moveSeconds <= 0){
+            brickArr.forEach(element => {
+                element.y+=50;
+                if(element.y >= player.y-element.height)
+                    endGame();
+            })
+            moveSeconds = 15;
+        }
+    }
+    if(hitsUntilBall <= 0){
+        hitsUntilBall = 10;
+        ballArr.push(new Ball(768,755-100,16));
+    }
     drawStage();
-    removeBricks();
+    removeDead();
     document.getElementById("score").innerHTML = "Score "+score;
+    document.getElementById("ballTimer").innerHTML =hitsUntilBall;
     requestAnimationFrame(tick);
 }
 
+function nextStage(){
+    canMove = false;
+    currentStage++;
+    if(currentStage >= 5)
+        victory();
+    let stageToWrite;
+    if(currentStage == 1)
+        stageToWrite = stage1;
+    else if(currentStage == 2)
+        stageToWrite = stage2;
+    else if(currentStage == 3)
+        stageToWrite = stage3;
+    else if(currentStage == 4)
+        stageToWrite = stage4;
+    document.getElementById("title").innerHTML = stageToWrite[0];
+    Swal.fire({
+        imageUrl:"./images/commander.png",
+        background:"#288e8f url(./images/transparentBackground.png)" ,
+        title:"<p style='color:#000000;font-size:2.0em;'>New message</p>",
+        html:"<p style='color:#000000;font-size:1.5em;'>Hello again. Good job on those aliens out there! But "+stageToWrite[0]+" is also getting attacked! Go and protect it!</p>",
+        confirmButtonText: "Next station!"
+    }).then().then((text) => {
+        if(text.value)
+            createStage();
+    })
+}
+
 function createStage(){
-    player = new Paddle(768-100,850-40,150,32);
-    /*todo: read brick positions from file?*/
-    for(let i=0;i<5;i++){
-        //distance between x= (totalWidth-brickWidth)/(numOfBricks-1)
-        brickArr.push(new Brick(334*i,100,64,64));
+    brickArr = [];
+    ballArr = [];
+    moveSeconds = 15;
+    hitsUntilBall = 10;
+    player = new Paddle(768-75,850-40,150,32);
+    let stageToCreate = [];
+    if(currentStage == 1)
+        stageToCreate = stage1;
+    else if(currentStage == 2)
+        stageToCreate = stage2;
+    else if(currentStage == 3)
+        stageToCreate = stage3;
+    else if(currentStage == 4)
+        stageToCreate = stage4;
+    createBrickArray(stageToCreate);
+    ballArr.push(new Ball(768,755-100,16));
+}
+
+function createBrickArray(stage){
+    for(let i=1;i<stage.length;i++){
+        let currentLine = stage[i];
+        for(let j=0;j<currentLine.length;j++){
+            let char = currentLine.charAt(j);
+            if(char != "x"){
+                char = parseInt(char);
+                brickArr.push(new Brick(67*j,100*i,64,64,char));
+            }
+        }
     }
-    ball = new Ball(768,755-100,15);
 }
 
 function drawStage(){
@@ -60,34 +142,107 @@ function drawStage(){
     ctx.fillRect(0,0,canvas.width,canvas.height);
     player.draw();
     player.frames++;
-    ball.draw();
+    ballArr.forEach(element =>{
+        element.draw();
+    })
     brickArr.forEach(element => {
         element.draw(ctx);
         element.frames++;
     })
 }
 
-function removeBricks(){
+function removeDead(){
     for(let i=0;i<brickArr.length;i++){
         if(brickArr[i].hits <= 0)
             brickArr.splice(i,1);
+        if(brickArr.length <= 0)
+            nextStage();
     }
+    for(let i=0;i<ballArr.length;i++){
+        if(ballArr[i].dead){
+            ballArr.splice(i,1);
+            if(ballArr.length <= 0)
+                endGame();
+        }
+    }
+}
+
+function enterName(){
+    Swal.fire({
+        icon:"question",
+        background:"#288e8f url(./images/transparentBackground.png)" ,
+        title:"<p style='color:#000000;font-size:2.0em;'>Entry</p>",
+        html:"<p style='color:#000000;font-size:1.5em;'>Please enter your name, Agent.</p>",
+        input:"text",
+        confirmButtonText: "Confirm"
+    }).then((text) => {
+        if(text.value){
+            name = text.value;
+            firstMessage();
+        }
+        else{
+            enterName();
+        } 
+    })
+}
+
+function victory(){
+    canMove = false;
+    let min = Math.floor(seconds/60);
+    let sec = Math.floor(seconds-(60*min));
+    if(sec<10)
+        sec="0"+sec;
+    scores.push({player:name,score:score,time:min+":"+sec});
+    localStorage.setItem("scores",JSON.stringify(scores));
+    Swal.fire({
+        imageUrl:"./images/commander.png",
+        background:"#288e8f url(./images/transparentBackground.png)" ,
+        title:"<p style='color:#000000;font-size:2.0em;font-color:#00FF00'>Victory!</p>",
+        html:"<p style='color:#000000;font-size:1.5em;'>You are truly amazing agent "+name+". You sent those aliens right back to where they came from! Earth is once again victorious!<br/>Your score was "+score+"</p>",
+        confirmButtonText: "Play again?",
+    }).then().then((result) => {
+        if(result.value){
+            currentStage = 1;
+            createStage();
+        }
+    })
+}
+
+function firstMessage(){
+    Swal.fire({
+        imageUrl:"./images/commander.png",
+        background:"#288e8f url(./images/transparentBackground.png)" ,
+        title:"<p style='color:#000000;font-size:2.0em;'>Emergency!</p>",
+        html:"<p style='color:#000000;font-size:1.5em;'>Hello agent Name. This is agent Phil Coulson from the main base. Aliens are currently attacking our stations, and we must stop them as soon as possible. You are our best pilot. We do not have much time.</p>",
+        confirmButtonText: "Let's fight!"
+    }).then().then((result) => {
+        if(result.value)
+          gameStart();
+    })
 }
 
 function displayTutorial(){
     Swal.fire({
-        title:"Tutorial",
-        text:"Use the left and right arrow keys to move the paddle, and bounce the ball into the invaders. Purple and orange take more hits to kill. The invaders move down, so you better win quickly!",
-        icon:"question"
-    });
+        icon: "question",
+        background:"#288e8f url(./images/transparentBackground.png)" ,
+        title:"<p style='color:#000000;font-size:2.0em;'>How to play!</p>",
+        html:"<p style='color:#000000;font-size:1.5em;'>Press space to begin the game. Use the left and right arrow keys to move the paddle. You need to bounce the missile into the aliens. Green aliens only need to be hit once, while orange need to be hit twice and purple ones three times. Every 10 hits you will get an additional missile. Every 15 seconds the aliens will move closer. Don't lose all the missiles or let the aliens reach you or you will lose! </p>",
+        confirmButtonText: "Confirm!"
+    })
 }
 
 function displayScore(){
+    let scoreString = "";
+    scores.forEach(element => {
+        scoreString+= element.player +" "+element.score+" "+element.time+"<br/>";
+    })
     Swal.fire({
-        title:"Scores",
-        text:"Not yet in existance",
-        icon:"question"
-    });
+        imageUrl:"./images/award.png",
+        background:"#288e8f url(./images/transparentBackground.png)" ,
+        title:"<p style='color:#000000;font-size:2.0em;'>Scores</p>",
+        html:"<p style='color:#000000;font-size:1.5em;'>"+scoreString+"</p>",
+        confirmButtonText: "Confirm!"
+    })
 }
 
 function getDirection(){
@@ -111,15 +266,31 @@ function scale(){
         element.scale(scaleX,scaleY);
     })
     player.scale(scaleX,scaleY);
-    ball.scale(scaleX,scaleY);
+    ballArr.forEach(element =>{
+        element.scale(scaleX,scaleY);
+    })
 }
 
 function endGame(){
+    canMove = false;
+    let min = Math.floor(seconds/60);
+    let sec = Math.floor(seconds-(60*min));
+    if(sec<10)
+        sec="0"+sec;
+    scores.push({player:name,score:score,time:min+":"+sec});
+    localStorage.setItem("scores",JSON.stringify(scores));
     Swal.fire({
-        title:"Failure!",
-        text:"You failed to stop the alien invasion!",
-        icon:"error"
-    });
+        imageUrl:"./images/invader/invader2_0.png",
+        background:"#288e8f url(./images/transparentBackground.png)" ,
+        title:"<p style='color:#000000;font-size:2.0em;'>Failure</p>",
+        html:"<p style='color:#000000;font-size:1.5em;'>You failed to stop the alien invasion!<br/>Your score was "+score+"</p>",
+        confirmButtonText: "Restart",
+    }).then().then((result) => {
+        if(result.value){
+            currentStage = 1;
+            createStage();
+        }
+    })
 }
 
 
